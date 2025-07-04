@@ -16,7 +16,7 @@ export function useApiData<T extends { id: string }>(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const data = getItems<T>(endpoint as keyof typeof useDataStore);
+  const data = getItems<T>(endpoint as any);
 
   const loadData = async () => {
     setLoading(true);
@@ -43,7 +43,7 @@ export function useApiData<T extends { id: string }>(
     try {
       const response = await apiService.create(itemData);
       if (response.success) {
-        addItem(endpoint as keyof typeof useDataStore, response.data);
+        addItem(endpoint as any, response.data);
         return response.data;
       } else {
         setError(response.message || 'Failed to create item');
@@ -64,7 +64,7 @@ export function useApiData<T extends { id: string }>(
     try {
       const response = await apiService.update(id, updates);
       if (response.success && response.data) {
-        updateItem(endpoint as keyof typeof useDataStore, id, updates);
+        updateItem(endpoint as any, id, updates);
         return response.data;
       } else {
         setError(response.message || 'Failed to update item');
@@ -85,7 +85,7 @@ export function useApiData<T extends { id: string }>(
     try {
       const response = await apiService.delete(id);
       if (response.success) {
-        deleteItem(endpoint as keyof typeof useDataStore, id);
+        deleteItem(endpoint as any, id);
         return true;
       } else {
         setError(response.message || 'Failed to delete item');
