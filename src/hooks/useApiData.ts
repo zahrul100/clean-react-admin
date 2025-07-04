@@ -1,16 +1,11 @@
 
 import { useState, useEffect } from 'react';
 import { useDataStore } from '@/store/dataStore';
-import { ApiResponse } from '@/services/api';
+import { ApiResponse, ApiServiceInterface } from '@/services/api/types';
 
 export function useApiData<T extends { id: string }>(
   endpoint: string,
-  apiService: {
-    getAll: () => Promise<ApiResponse<T[]>>;
-    create: (data: Omit<T, 'id'>) => Promise<ApiResponse<T>>;
-    update: (id: string, data: Partial<Omit<T, 'id'>>) => Promise<ApiResponse<T | null>>;
-    delete: (id: string) => Promise<ApiResponse<boolean>>;
-  }
+  apiService: ApiServiceInterface<T>
 ) {
   const { getItems, addItem, updateItem, deleteItem } = useDataStore();
   const [loading, setLoading] = useState(false);
@@ -24,7 +19,6 @@ export function useApiData<T extends { id: string }>(
     try {
       const response = await apiService.getAll();
       if (response.success) {
-        // Update store with API data
         console.log(`Loaded ${response.data.length} items from API for ${endpoint}`);
       } else {
         setError(response.message || 'Failed to load data');
