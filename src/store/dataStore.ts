@@ -95,8 +95,8 @@ interface DataState {
   contactInfo: ContactInfo[];
 
   // Generic CRUD operations
-  addItem: <T extends { id: string }>(type: keyof DataState, item: T) => void;
-  updateItem: <T extends { id: string }>(type: keyof DataState, id: string, item: T) => void;
+  addItem: <T extends { id: string }>(type: keyof DataState, item: Omit<T, 'id'>) => void;
+  updateItem: <T extends { id: string }>(type: keyof DataState, id: string, item: Partial<Omit<T, 'id'>>) => void;
   deleteItem: (type: keyof DataState, id: string) => void;
   getItems: <T>(type: keyof DataState) => T[];
   getItem: <T extends { id: string }>(type: keyof DataState, id: string) => T | undefined;
@@ -189,8 +189,9 @@ export const useDataStore = create<DataState>((set, get) => ({
   contactInfo: initialContactInfo,
 
   addItem: (type, item) => {
+    const newItem = { ...item, id: Date.now().toString() };
     set((state) => ({
-      [type]: [...(state[type] as any[]), { ...item, id: Date.now().toString() }]
+      [type]: [...(state[type] as any[]), newItem]
     }));
   },
 
